@@ -1087,6 +1087,7 @@ if sql:
           self.__state__ = { #XXX: add 'cloud' option?
               'serialized': bool(kwds.pop('serialized', True)),
               'id': _database,
+              'key_type': kwds.pop('key_type', sql.String(255)),
               'protocol': kwds.pop('protocol', dill.DEFAULT_PROTOCOL),
               # preserve other settings (for copy)
               'config': kwds.pop('config', kwds.copy())
@@ -1310,7 +1311,7 @@ if sql:
           try: return self._gettable(key, meta=True) # table exists
           except KeyError: table = key # table doesn't exist in metadata
           # prepare table types #XXX: do in __init__ ?
-          keytype = sql.String(255)
+          keytype = self.__state__['key_type']
           if self.__state__['serialized']:
               proto = self.__state__['protocol']
               if type(proto) is str: #XXX: assumes 'json'
@@ -1434,6 +1435,7 @@ if sql:
               'serialized': bool(kwds.pop('serialized', True)),
               'root': _database,
               'id': table,
+              'key_type': kwds.pop('key_type', sql.String(255)),
               'protocol': kwds.pop('protocol', dill.DEFAULT_PROTOCOL),
               # preserve other settings (for copy)
               'config': kwds.pop('config', kwds.copy())
@@ -1463,7 +1465,7 @@ if sql:
           self._metadata = sql.MetaData()
           self._key = 'Kkey' # primary key name
           self._val = 'Kval' # object storage name
-          keytype = sql.String(255) #XXX: other better fixed size?
+          keytype = self.__state__['key_type'] #XXX: other better fixed size?
           if self.__state__['serialized']:
               proto = self.__state__['protocol']
               if type(proto) is str: #XXX: assumes 'json'
