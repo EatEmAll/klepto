@@ -93,7 +93,7 @@ def signature(func, variadic=True, markup=True, safe=False):
         p_kwds = {}
 
     try:
-        arg_spec = inspect.getargspec(func)
+        arg_spec = inspect.getfullargspec(func)
     except TypeError:
         if safe: return LONG_FAIL if variadic else TINY_FAIL
         raise TypeError('%r is not a Python function' % func)
@@ -101,7 +101,7 @@ def signature(func, variadic=True, markup=True, safe=False):
     if hasattr(arg_spec, 'args'):
         arg_names = arg_spec.args         # list of input variable names
         arg_defaults = arg_spec.defaults  # list of kwd default values
-        arg_keywords = arg_spec.keywords  # name of **kwds
+        arg_keywords = arg_spec.varkw     # name of **kwds
         arg_varargs = arg_spec.varargs    # name of *args
     else:
         arg_names, arg_varargs, arg_keywords, arg_defaults = arg_spec
