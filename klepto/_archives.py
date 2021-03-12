@@ -1534,7 +1534,11 @@ if sql:
           else:
               values = {self._key.name: key}
               values.update(value)
-              query = table.insert()
+              count_query = table.count().where(sql.and_(c == values[c.name] for c in table.columns))
+              if int(self._engine.execute(count_query).scalar()) == 0:
+                query = table.insert()
+              else:
+                query = table.update().where(self._key == key)
           self._engine.execute(query.values(**values))
           return
       __setitem__.__doc__ = dict.__setitem__.__doc__
